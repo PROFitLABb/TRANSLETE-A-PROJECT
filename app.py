@@ -7,15 +7,8 @@ from datetime import datetime
 from io import BytesIO
 import json
 
-# Sayfa Yapılandırması
-st.set_page_config(
-    page_title="Echo-Translate Pro", 
-    page_icon="🎤", 
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+st.set_page_config(page_title="Echo-Translate Pro", page_icon="🎤", layout="wide", initial_sidebar_state="expanded")
 
-# CSS Stilleri
 st.markdown("""
 <style>
     .main-header {
@@ -90,7 +83,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Başlık
 st.markdown("""
 <div class="main-header">
     <h1>🎤 Echo-Translate Pro</h1>
@@ -98,76 +90,41 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Yan Menü
 st.sidebar.header("⚙️ Ayarlar")
 
-# Dil Seçenekleri
 dil_secenekleri = {
-    "İngilizce 🇬🇧": "en",
-    "Fransızca 🇫🇷": "fr",
-    "Almanca 🇩🇪": "de",
-    "İspanyolca 🇪🇸": "es",
-    "İtalyanca 🇮🇹": "it",
-    "Rusça 🇷🇺": "ru",
-    "Japonca 🇯🇵": "ja",
-    "Çince 🇨🇳": "zh-cn",
-    "Korece 🇰🇷": "ko",
-    "Arapça 🇸🇦": "ar",
-    "Portekizce 🇵🇹": "pt",
-    "Hollandaca 🇳🇱": "nl",
-    "Yunanca 🇬🇷": "el",
-    "İsveççe 🇸🇪": "sv",
-    "Lehçe 🇵🇱": "pl",
-    "Türkçe 🇹🇷": "tr",
-    "Hintçe 🇮🇳": "hi",
-    "Farsça 🇮🇷": "fa",
-    "İbranice 🇮🇱": "he",
-    "Tayca 🇹🇭": "th",
-    "Vietnamca 🇻🇳": "vi",
-    "Endonezce 🇮🇩": "id",
-    "Malayca 🇲🇾": "ms",
-    "Ukraynaca 🇺🇦": "uk",
-    "Romence 🇷🇴": "ro",
-    "Çekçe 🇨🇿": "cs",
-    "Macarca 🇭🇺": "hu",
-    "Danca 🇩🇰": "da",
-    "Norveççe 🇳🇴": "no",
-    "Fince 🇫🇮": "fi",
-    "Bulgarca 🇧🇬": "bg",
-    "Hırvatça 🇭🇷": "hr",
-    "Sırpça 🇷🇸": "sr",
-    "Slovakça 🇸🇰": "sk",
-    "Slovence 🇸🇮": "sl"
+    "İngilizce 🇬🇧": "en", "Fransızca 🇫🇷": "fr", "Almanca 🇩🇪": "de",
+    "İspanyolca 🇪🇸": "es", "İtalyanca 🇮🇹": "it", "Rusça 🇷🇺": "ru",
+    "Japonca 🇯🇵": "ja", "Çince 🇨🇳": "zh-CN", "Korece 🇰🇷": "ko",
+    "Arapça 🇸🇦": "ar", "Portekizce 🇵🇹": "pt", "Hollandaca 🇳🇱": "nl",
+    "Yunanca 🇬🇷": "el", "İsveççe 🇸🇪": "sv", "Lehçe 🇵🇱": "pl",
+    "Türkçe 🇹🇷": "tr", "Hintçe 🇮🇳": "hi", "Farsça 🇮🇷": "fa",
+    "İbranice 🇮🇱": "he", "Tayca 🇹🇭": "th", "Vietnamca 🇻🇳": "vi",
+    "Endonezce 🇮🇩": "id", "Malayca 🇲🇾": "ms", "Ukraynaca 🇺🇦": "uk",
+    "Romence 🇷🇴": "ro", "Çekçe 🇨🇿": "cs", "Macarca 🇭🇺": "hu",
+    "Danca 🇩🇰": "da", "Norveççe 🇳🇴": "no", "Fince 🇫🇮": "fi",
+    "Bulgarca 🇧🇬": "bg", "Hırvatça 🇭�": "hr", "Sırpça 🇷🇸": "sr",
+    "Slovakça ��": "sk", "Slovence ��": "sl"
 }
 
 secilen_dil = st.sidebar.selectbox("🎯 Hedef Dil:", list(dil_secenekleri.keys()), index=0)
 target_lang = dil_secenekleri[secilen_dil]
 
-# Ses Ayarları
 st.sidebar.markdown("---")
 st.sidebar.subheader("🔊 Ses Ayarları")
 ses_hizi = st.sidebar.slider("Konuşma Hızı:", 0.5, 2.0, 1.0, 0.1)
 
+kaynak_dil_secenekleri = {
+    "Otomatik Algıla 🔍": "auto", "Türkçe ��": "tr", "İngilizce ��": "en",
+    "Fransızca ��": "fr", "Almanca ��": "de", "İspanyolca 🇪🇸": "es"
+}
+
+kaynak_dil = st.sidebar.selectbox("�️ Kaynak Dil:", list(kaynak_dil_secenekleri.keys()), index=0)
+kaynak_dil_kodu = kaynak_dil_secenekleri[kaynak_dil]
+
 st.sidebar.markdown("---")
 st.sidebar.info("💡 **İpucu:** Tarayıcınızın mikrofon iznini verin.")
 
-# Kaynak dil seçimi
-kaynak_dil_secenekleri = {
-    "Otomatik Algıla 🔍": "auto",
-    "Türkçe 🇹🇷": "tr",
-    "İngilizce 🇬🇧": "en",
-    "Fransızca 🇫🇷": "fr",
-    "Almanca 🇩🇪": "de",
-    "İspanyolca 🇪🇸": "es"
-}
-
-kaynak_dil = st.sidebar.selectbox("🎙️ Kaynak Dil:", list(kaynak_dil_secenekleri.keys()), index=0)
-kaynak_dil_kodu = kaynak_dil_secenekleri[kaynak_dil]
-
-# Translator
-translator = Translator()
-
-# Session State
 if 'history' not in st.session_state:
     st.session_state.history = []
 if 'total_translations' not in st.session_state:
@@ -175,7 +132,6 @@ if 'total_translations' not in st.session_state:
 if 'favorite_lang' not in st.session_state:
     st.session_state.favorite_lang = {}
 
-# İstatistikler ve Bilgi Kutuları
 st.markdown("### 📊 Proje Bilgileri ve İstatistikler")
 col1, col2, col3, col4 = st.columns(4)
 
@@ -223,24 +179,19 @@ with col4:
 st.markdown("---")
 
 def process_translation(text, source_lang="auto"):
-    """Çeviri işleme fonksiyonu"""
     try:
-        # Tercüme Et (deep-translator kullanarak)
         translator = GoogleTranslator(source=source_lang, target=target_lang)
         translated_text = translator.translate(text)
-        
-        # Kaynak dili algıla (deep-translator otomatik algılamıyor, tahmin edelim)
         detected_lang = source_lang if source_lang != "auto" else "tr"
         
-        # Dil isimlerini düzgün göster
         dil_isimleri = {
-            "tr": "Türkçe ��", "en": "İngilizce 🇬�", "fr": "Fransızca ��",
-            "de": "Almanca ��", "es": "İspanyolca ��", "it": "İtalyanca 🇮�",
-            "ru": "Rusça ��", "ja": "Japonca ��", "zh-cn": "Çince �🇳",
-            "ko": "Korece ��", "ar": "Arapça ��", "pt": "Portekizce ��",
-            "nl": "Hollandaca ��", "el": "Yunanca ��", "sv": "İsveççe ��",
-            "pl": "Lehçe ��", "hi": "Hintçe 🇮🇳", "fa": "Farsça 🇮🇷",
-            "he": "İbranice 🇮🇱", "th": "Tayca 🇹🇭", "vi": "Vietnamca 🇻🇳"
+            "tr": "Türkçe 🇹🇷", "en": "İngilizce 🇬🇧", "fr": "Fransızca 🇫🇷",
+            "de": "Almanca 🇩🇪", "es": "İspanyolca 🇪🇸", "it": "İtalyanca 🇮🇹",
+            "ru": "Rusça 🇷🇺", "ja": "Japonca 🇯🇵", "zh-CN": "Çince 🇨🇳",
+            "ko": "Korece 🇰🇷", "ar": "Arapça 🇸🇦", "pt": "Portekizce 🇵🇹",
+            "nl": "Hollandaca 🇳🇱", "el": "Yunanca 🇬🇷", "sv": "İsveççe 🇸🇪",
+            "pl": "Lehçe 🇵🇱", "hi": "Hintçe 🇮🇳", "fa": "Farsça 🇮🇷",
+            "he": "İbranice 🇮🇱", "th": "Tayca 🇹🇭", "vi": "Vietnamca 🇻🇳",
             "id": "Endonezce 🇮🇩", "ms": "Malayca 🇲🇾", "uk": "Ukraynaca 🇺🇦",
             "ro": "Romence 🇷🇴", "cs": "Çekçe 🇨🇿", "hu": "Macarca 🇭🇺",
             "da": "Danca 🇩🇰", "no": "Norveççe 🇳🇴", "fi": "Fince 🇫🇮",
@@ -271,23 +222,18 @@ def process_translation(text, source_lang="auto"):
             </div>
             """, unsafe_allow_html=True)
         
-        # Metni Sese Çevir
         tts = gTTS(text=translated_text, lang=target_lang, slow=(ses_hizi < 1.0))
         audio_bytes = BytesIO()
         tts.write_to_fp(audio_bytes)
         audio_bytes.seek(0)
-        
-        # Sesi Çal
         st.audio(audio_bytes, format="audio/mp3")
         
-        # İstatistikleri Güncelle
         st.session_state.total_translations += 1
         if secilen_dil in st.session_state.favorite_lang:
             st.session_state.favorite_lang[secilen_dil] += 1
         else:
             st.session_state.favorite_lang[secilen_dil] = 1
         
-        # Geçmişe Ekle
         st.session_state.history.append({
             "zaman": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "orijinal": text,
@@ -297,67 +243,46 @@ def process_translation(text, source_lang="auto"):
         })
         
         return True
-        
     except Exception as e:
         st.error(f"❌ Çeviri hatası: {e}")
         return False
 
-# Ana Arayüz - Sekmeler
-tab1, tab2, tab3 = st.tabs(["🎤 Sesli Çeviri", "⌨️ Metin Çevirisi", "📊 İstatistikler"])
+tab1, tab2, tab3 = st.tabs(["� Sesli Çeviri", "⌨️ Metin Çevirisi", "📊 İstatistikler"])
 
 with tab1:
     st.markdown("### Mikrofona konuşarak anlık çeviri yapın")
-    st.info("🎙️ **Tarayıcı Mikrofonu:** Aşağıdaki butona tıklayın ve konuşun. Tarayıcınız mikrofon izni isteyecektir.")
+    st.info("🎙️ **Tarayıcı Mikrofonu:** Aşağıdaki butona tıklayın ve konuşun.")
     
-    # Tarayıcı tabanlı ses kaydı
     audio_value = st.audio_input("Mikrofona konuşun")
     
     if audio_value:
         st.success("✅ Ses kaydedildi! İşleniyor...")
-        
         try:
-            # Ses dosyasını geçici olarak kaydet
             temp_audio = f"temp_audio_{datetime.now().strftime('%Y%m%d_%H%M%S')}.wav"
             with open(temp_audio, "wb") as f:
                 f.write(audio_value.getbuffer())
             
-            # SpeechRecognition ile metne çevir
             r = sr.Recognizer()
-            
             with sr.AudioFile(temp_audio) as source:
                 audio_data = r.record(source)
-                
-                # Google Speech Recognition ile metne çevir
                 try:
-                    # Kaynak dil kodunu speech recognition formatına çevir
                     speech_lang = "tr-TR" if kaynak_dil_kodu in ["auto", "tr"] else f"{kaynak_dil_kodu}-{kaynak_dil_kodu.upper()}"
                     text = r.recognize_google(audio_data, language=speech_lang)
                     st.write(f"**🎯 Anlaşılan:** {text}")
-                    
-                    # Çeviriyi yap
                     process_translation(text, kaynak_dil_kodu)
-                    
                 except sr.UnknownValueError:
                     st.error("❌ Ses anlaşılamadı. Lütfen daha net konuşun.")
                 except sr.RequestError as e:
                     st.error(f"❌ Google Speech Recognition servisi hatası: {e}")
             
-            # Geçici dosyayı sil
             if os.path.exists(temp_audio):
                 os.remove(temp_audio)
-                
         except Exception as e:
             st.error(f"❌ Ses işleme hatası: {e}")
 
 with tab2:
     st.markdown("### Metin yazarak çeviri yapın")
-    
-    text_input = st.text_area(
-        "Çevirmek istediğiniz metni yazın:", 
-        height=200, 
-        placeholder="Buraya yazın...",
-        key="text_input"
-    )
+    text_input = st.text_area("Çevirmek istediğiniz metni yazın:", height=200, placeholder="Buraya yazın...", key="text_input")
     
     col1, col2 = st.columns(2)
     with col1:
@@ -366,7 +291,6 @@ with tab2:
                 process_translation(text_input, kaynak_dil_kodu)
             else:
                 st.warning("⚠️ Lütfen bir metin girin.")
-    
     with col2:
         if st.button("🗑️ Temizle", use_container_width=True, key="clear_btn"):
             st.rerun()
@@ -375,19 +299,16 @@ with tab3:
     st.markdown("### Çeviri İstatistikleri ve Geçmiş")
     
     if st.session_state.history:
-        # Grafik için veri hazırla
         dil_dagilimi = {}
         for item in st.session_state.history:
             dil = item['hedef_dil']
             dil_dagilimi[dil] = dil_dagilimi.get(dil, 0) + 1
         
         col1, col2 = st.columns(2)
-        
         with col1:
             st.subheader("📊 Dil Dağılımı")
             for dil, sayi in sorted(dil_dagilimi.items(), key=lambda x: x[1], reverse=True):
                 st.write(f"**{dil}:** {sayi} çeviri")
-        
         with col2:
             st.subheader("⏰ Son Çeviriler")
             for item in reversed(st.session_state.history[-5:]):
@@ -413,9 +334,7 @@ with tab3:
                 st.session_state.total_translations = 0
                 st.session_state.favorite_lang = {}
                 st.rerun()
-        
         with col2:
-            # JSON olarak indir
             json_str = json.dumps(st.session_state.history, ensure_ascii=False, indent=2)
             st.download_button(
                 label="💾 JSON İndir",
@@ -427,7 +346,6 @@ with tab3:
     else:
         st.info("📭 Henüz çeviri geçmişi yok. Yukarıdaki sekmelerden çeviri yapmaya başlayın!")
 
-# Alt Bilgi
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; padding: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; color: white; margin-top: 2rem;'>
