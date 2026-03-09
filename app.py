@@ -240,7 +240,7 @@ def process_translation(text, source_lang="auto"):
             "ko": "Korece ��", "ar": "Arapça ��", "pt": "Portekizce ��",
             "nl": "Hollandaca ��", "el": "Yunanca ��", "sv": "İsveççe ��",
             "pl": "Lehçe ��", "hi": "Hintçe 🇮🇳", "fa": "Farsça 🇮🇷",
-            "he": "İbranice ��", "th": : "Tayca 🇹🇭", "vi": "Vietnamca 🇻🇳",
+            "he": "İbranice 🇮🇱", "th": "Tayca 🇹🇭", "vi": "Vietnamca 🇻🇳"
             "id": "Endonezce 🇮🇩", "ms": "Malayca 🇲🇾", "uk": "Ukraynaca 🇺🇦",
             "ro": "Romence 🇷🇴", "cs": "Çekçe 🇨🇿", "hu": "Macarca 🇭🇺",
             "da": "Danca 🇩🇰", "no": "Norveççe 🇳🇴", "fi": "Fince 🇫🇮",
