@@ -1,5 +1,5 @@
 import streamlit as st
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 from gtts import gTTS
 import speech_recognition as sr
 import os
@@ -151,6 +151,19 @@ ses_hizi = st.sidebar.slider("Konuşma Hızı:", 0.5, 2.0, 1.0, 0.1)
 st.sidebar.markdown("---")
 st.sidebar.info("💡 **İpucu:** Tarayıcınızın mikrofon iznini verin.")
 
+# Kaynak dil seçimi
+kaynak_dil_secenekleri = {
+    "Otomatik Algıla 🔍": "auto",
+    "Türkçe 🇹🇷": "tr",
+    "İngilizce 🇬🇧": "en",
+    "Fransızca 🇫🇷": "fr",
+    "Almanca 🇩🇪": "de",
+    "İspanyolca 🇪🇸": "es"
+}
+
+kaynak_dil = st.sidebar.selectbox("🎙️ Kaynak Dil:", list(kaynak_dil_secenekleri.keys()), index=0)
+kaynak_dil_kodu = kaynak_dil_secenekleri[kaynak_dil]
+
 # Translator
 translator = Translator()
 
@@ -212,26 +225,30 @@ st.markdown("---")
 def process_translation(text, source_lang="auto"):
     """Çeviri işleme fonksiyonu"""
     try:
-        # Tercüme Et
-        translated = translator.translate(text, src=source_lang, dest=target_lang)
+        # Tercüme Et (deep-translator kullanarak)
+        translator = GoogleTranslator(source=source_lang, target=target_lang)
+        translated_text = translator.translate(text)
+        
+        # Kaynak dili algıla (deep-translator otomatik algılamıyor, tahmin edelim)
+        detected_lang = source_lang if source_lang != "auto" else "tr"
         
         # Dil isimlerini düzgün göster
         dil_isimleri = {
-            "tr": "Türkçe 🇹🇷", "en": "İngilizce 🇬🇧", "fr": "Fransızca 🇫🇷",
-            "de": "Almanca 🇩🇪", "es": "İspanyolca 🇪🇸", "it": "İtalyanca 🇮🇹",
-            "ru": "Rusça 🇷🇺", "ja": "Japonca 🇯🇵", "zh-cn": "Çince 🇨🇳",
-            "ko": "Korece 🇰🇷", "ar": "Arapça 🇸🇦", "pt": "Portekizce 🇵🇹",
-            "nl": "Hollandaca 🇳🇱", "el": "Yunanca 🇬🇷", "sv": "İsveççe 🇸🇪",
-            "pl": "Lehçe 🇵🇱", "hi": "Hintçe 🇮🇳", "fa": "Farsça 🇮🇷",
-            "he": "İbranice 🇮🇱", "th": "Tayca 🇹🇭", "vi": "Vietnamca 🇻🇳",
+            "tr": "Türkçe ��", "en": "İngilizce 🇬�", "fr": "Fransızca ��",
+            "de": "Almanca ��", "es": "İspanyolca ��", "it": "İtalyanca 🇮�",
+            "ru": "Rusça ��", "ja": "Japonca ��", "zh-cn": "Çince �🇳",
+            "ko": "Korece ��", "ar": "Arapça ��", "pt": "Portekizce ��",
+            "nl": "Hollandaca ��", "el": "Yunanca ��", "sv": "İsveççe ��",
+            "pl": "Lehçe ��", "hi": "Hintçe 🇮🇳", "fa": "Farsça 🇮🇷",
+            "he": "İbranice ��", "th": : "Tayca 🇹🇭", "vi": "Vietnamca 🇻🇳",
             "id": "Endonezce 🇮🇩", "ms": "Malayca 🇲🇾", "uk": "Ukraynaca 🇺🇦",
             "ro": "Romence 🇷🇴", "cs": "Çekçe 🇨🇿", "hu": "Macarca 🇭🇺",
             "da": "Danca 🇩🇰", "no": "Norveççe 🇳🇴", "fi": "Fince 🇫🇮",
             "bg": "Bulgarca 🇧🇬", "hr": "Hırvatça 🇭🇷", "sr": "Sırpça 🇷🇸",
-            "sk": "Slovakça 🇸🇰", "sl": "Slovence 🇸🇮"
+            "sk": "Slovakça 🇸🇰", "sl": "Slovence 🇸🇮", "auto": "Otomatik 🔍"
         }
         
-        kaynak_dil_adi = dil_isimleri.get(translated.src, translated.src.upper())
+        kaynak_dil_adi = dil_isimleri.get(detected_lang, detected_lang.upper())
         hedef_dil_adi = secilen_dil
         
         col1, col2 = st.columns(2)
@@ -241,7 +258,7 @@ def process_translation(text, source_lang="auto"):
             <div class="success-box">
                 <h4>📝 Orijinal Metin</h4>
                 <p style="font-size: 1.1em;"><i>{text}</i></p>
-                <small>Algılanan Dil: {kaynak_dil_adi}</small>
+                <small>Kaynak Dil: {kaynak_dil_adi}</small>
             </div>
             """, unsafe_allow_html=True)
         
@@ -249,13 +266,13 @@ def process_translation(text, source_lang="auto"):
             st.markdown(f"""
             <div class="info-box">
                 <h4>🌍 Çeviri</h4>
-                <p style="font-size: 1.1em;"><i>{translated.text}</i></p>
+                <p style="font-size: 1.1em;"><i>{translated_text}</i></p>
                 <small>Hedef Dil: {hedef_dil_adi}</small>
             </div>
             """, unsafe_allow_html=True)
         
         # Metni Sese Çevir
-        tts = gTTS(text=translated.text, lang=target_lang, slow=(ses_hizi < 1.0))
+        tts = gTTS(text=translated_text, lang=target_lang, slow=(ses_hizi < 1.0))
         audio_bytes = BytesIO()
         tts.write_to_fp(audio_bytes)
         audio_bytes.seek(0)
@@ -274,8 +291,8 @@ def process_translation(text, source_lang="auto"):
         st.session_state.history.append({
             "zaman": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "orijinal": text,
-            "ceviri": translated.text,
-            "kaynak_dil": translated.src,
+            "ceviri": translated_text,
+            "kaynak_dil": detected_lang,
             "hedef_dil": secilen_dil
         })
         
@@ -312,11 +329,13 @@ with tab1:
                 
                 # Google Speech Recognition ile metne çevir
                 try:
-                    text = r.recognize_google(audio_data, language="tr-TR")
+                    # Kaynak dil kodunu speech recognition formatına çevir
+                    speech_lang = "tr-TR" if kaynak_dil_kodu in ["auto", "tr"] else f"{kaynak_dil_kodu}-{kaynak_dil_kodu.upper()}"
+                    text = r.recognize_google(audio_data, language=speech_lang)
                     st.write(f"**🎯 Anlaşılan:** {text}")
                     
                     # Çeviriyi yap
-                    process_translation(text)
+                    process_translation(text, kaynak_dil_kodu)
                     
                 except sr.UnknownValueError:
                     st.error("❌ Ses anlaşılamadı. Lütfen daha net konuşun.")
@@ -344,7 +363,7 @@ with tab2:
     with col1:
         if st.button("📝 Metni Çevir", use_container_width=True, type="primary", key="text_btn"):
             if text_input:
-                process_translation(text_input)
+                process_translation(text_input, kaynak_dil_kodu)
             else:
                 st.warning("⚠️ Lütfen bir metin girin.")
     
